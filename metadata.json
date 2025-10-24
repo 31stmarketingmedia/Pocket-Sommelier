@@ -1,0 +1,7 @@
+{
+  "name": "Pocket Sommelier",
+  "description": "An elegant and intelligent food-and-drink pairing app that provides expert drink recommendations for any dish, snack, or menu. It explains why each pairing works and features a vendor marketplace to purchase recommended drinks.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
