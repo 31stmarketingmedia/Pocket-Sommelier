@@ -4,20 +4,83 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pocket Sommelier</title>
+    <title>My Pocket Bartender</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lora:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Lora', serif;
+        --dark-wood: #1a120b;
+        --polished-oak: #3a2d22;
+        --rich-gold: #e6a756;
+        --deep-crimson: #a13d3d;
+        --off-white: #f3eee4;
+        --soft-black: #120e0a;
       }
+      
+      #root::before {
+        content: '';
+        position: fixed;
+        top: 0; left: 0; right: 0; bottom: 0;
+        z-index: -1;
+        /* AI-Generated Photorealistic Bar Background */
+        background-color: var(--soft-black);
+        background-image:
+          /* Gold Bottle Glows */
+          radial-gradient(ellipse at 70% 25%, var(--rich-gold), transparent 40%),
+          radial-gradient(ellipse at 30% 28%, var(--rich-gold), transparent 40%),
+          radial-gradient(ellipse at 50% 65%, rgba(230, 167, 86, 0.4), transparent 50%),
+          /* Polished Bar Top Highlight */
+          linear-gradient(to top, rgba(243, 238, 228, 0.1), transparent 30%),
+          /* Wooden Shelves and Bar Texture */
+          repeating-linear-gradient(0deg, var(--polished-oak), var(--polished-oak) 2px, var(--dark-wood) 2px, var(--dark-wood) 250px),
+          repeating-linear-gradient(90deg, #2a2017, #2a2017 4px, var(--dark-wood) 4px, var(--dark-wood) 100px);
+        background-size: 15% 30%, 15% 30%, 40% 40%, 100% 100%, 100% 100%, 100% 100%;
+        background-position: 70% 25%, 30% 28%, 50% 65%, center bottom, 0 0, 0 0;
+        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
+        filter: blur(3px) brightness(0.6) saturate(1.2);
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
+
       h1, h2, h3, h4, .font-serif {
-        font-family: 'Poppins', sans-serif;
-        font-weight: 700;
+        font-family: 'Playfair Display', serif;
+      }
+      .font-sans {
+        font-family: 'Lora', serif;
+      }
+
+      /* Custom scrollbar for the professional theme */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--soft-black);
+      }
+      ::-webkit-scrollbar-thumb {
+        background-color: var(--rich-gold);
+        border-radius: 20px;
+        border: 3px solid var(--soft-black);
       }
     </style>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'dark-wood': 'var(--dark-wood)',
+              'polished-oak': 'var(--polished-oak)',
+              'rich-gold': 'var(--rich-gold)',
+              'off-white': 'var(--off-white)',
+              'deep-crimson': 'var(--deep-crimson)',
+              'soft-black': 'var(--soft-black)',
+            }
+          }
+        }
+      }
+    </script>
   <script type="importmap">
 {
   "imports": {
@@ -29,7 +92,7 @@
 }
 </script>
 </head>
-  <body class="bg-gray-100 text-gray-800">
+  <body class="bg-dark-wood text-off-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>

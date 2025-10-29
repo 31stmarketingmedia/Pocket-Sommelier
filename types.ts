@@ -5,6 +5,7 @@ export interface PairingRecommendation {
   type: string;
   description: string;
   reasoning: string;
+  estimatedPrice: string;
 }
 
 export interface Vendor {

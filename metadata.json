@@ -1,7 +1,8 @@
 {
-  "name": "Pocket Sommelier",
-  "description": "An elegant and intelligent food-and-drink pairing app that provides expert drink recommendations for any dish, snack, or menu. It explains why each pairing works and features a vendor marketplace to purchase recommended drinks.",
+  "name": "My Pocket Bartender",
+  "description": "Your personal bartender in your pocket. Get expert cocktail, beer, and wine pairing recommendations for any food, from snacks to gourmet meals.",
   "requestFramePermissions": [
-    "geolocation"
+    "geolocation",
+    "microphone"
   ]
 }

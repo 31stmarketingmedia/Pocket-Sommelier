@@ -4,11 +4,12 @@ type IconProps = {
     className?: string;
 }
 
-export const WineIcon: React.FC<IconProps> = ({ className }) => (
+export const BarrelIcon: React.FC<IconProps> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="currentColor">
-        <path d="M16 13.26A7.5 7.5 0 1 0 8 13.26V18h-1v2h2v-2h-1v-2h2v2h-1v2h2v-2h-1v-4.74A7.5 7.5 0 0 0 16 13.26M12 4a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11Z"/>
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 2h-2v2h2V5zm-4 0H9v2h4V5zm-6 0H5v2h2V5zM5 19v-2h2v2H5zm4 0v-2h4v2H9zm8 0h-2v-2h2v2zm0-4H5v-4h14v4z"/>
     </svg>
 );
+
 
 export const BookmarkIcon: React.FC<IconProps> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
@@ -45,4 +46,13 @@ export const ExternalLinkIcon: React.FC<IconProps> = ({ className }) => (
     <polyline points="15 3 21 3 21 9"></polyline>
     <line x1="10" y1="14" x2="21" y2="3"></line>
   </svg>
+);
+
+export const MicrophoneIcon: React.FC<IconProps> = ({ className }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
+    </svg>
 );

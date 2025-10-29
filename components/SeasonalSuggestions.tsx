@@ -14,10 +14,10 @@ const suggestions: Record<Season, string[]> = {
 };
 
 const seasonInfo: Record<Season, { color: string }> = {
-    Spring: { color: 'text-green-600' },
-    Summer: { color: 'text-yellow-600' },
-    Autumn: { color: 'text-orange-600' },
-    Winter: { color: 'text-blue-600' },
+    Spring: { color: 'text-green-300' },
+    Summer: { color: 'text-yellow-300' },
+    Autumn: { color: 'text-orange-300' },
+    Winter: { color: 'text-blue-300' },
 };
 
 const SeasonalSuggestions: React.FC<SeasonalSuggestionsProps> = ({ season, onSuggestionClick }) => {
@@ -25,17 +25,17 @@ const SeasonalSuggestions: React.FC<SeasonalSuggestionsProps> = ({ season, onSug
     const { color } = seasonInfo[season];
 
     return (
-        <div className="text-center py-8 px-4 bg-white rounded-2xl border border-gray-200">
-            <h3 className={`text-2xl font-bold mb-4 ${color}`}>
+        <div className="text-center py-8 px-4 bg-dark-wood/50 rounded-2xl border border-rich-gold/20">
+            <h3 className={`text-2xl font-bold mb-4 ${color} font-serif`}>
                 Try a Seasonal Favorite
             </h3>
-            <p className="text-gray-600 mb-6 max-w-2xl mx-auto">Click a suggestion to instantly find perfect pairings for the current season.</p>
+            <p className="text-off-white/70 mb-6 max-w-2xl mx-auto">Click a suggestion to instantly find perfect pairings for the current season.</p>
             <div className="flex flex-wrap justify-center gap-3">
                 {currentSuggestions.map(suggestion => (
                     <button
                         key={suggestion}
                         onClick={() => onSuggestionClick(suggestion)}
-                        className="bg-gray-100 border border-gray-200 px-4 py-2 rounded-full text-gray-700 font-medium hover:bg-gray-200 hover:text-black transition-colors transform hover:scale-105"
+                        className="bg-polished-oak border border-rich-gold/30 px-4 py-2 rounded-full text-off-white/80 font-medium hover:bg-rich-gold hover:text-dark-wood hover:border-rich-gold transition-colors transform hover:scale-105"
                     >
                         {suggestion}
                     </button>
