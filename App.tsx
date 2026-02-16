@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import type { PairingRecommendation, Season, NearbyPlace, Coordinates } from './types';
 import { VENDORS } from './constants';
@@ -6,7 +7,8 @@ import Header from './components/Header';
 import PairingCard from './components/PairingCard';
 import SeasonalSuggestions from './components/SeasonalSuggestions';
 import { LoadingSpinner } from './components/LoadingSpinner';
-import { LocationIcon, MicrophoneIcon } from './components/icons';
+import { LocationIcon, MicrophoneIcon, ClockIcon } from './components/icons';
+import AboutModal from './components/AboutModal';
 
 declare global {
   interface Window {
@@ -17,11 +19,11 @@ declare global {
 
 const SEASONS: Season[] = ['Spring', 'Summer', 'Autumn', 'Winter'];
 
-const seasonInfo: Record<Season, { color: string, icon: string, ring: string, border: string, bg: string }> = {
-    Spring: { color: 'text-green-300', icon: '🌸', ring: 'focus:ring-green-400', border: 'border-green-500', bg: 'bg-green-500/20' },
-    Summer: { color: 'text-yellow-300', icon: '☀️', ring: 'focus:ring-yellow-400', border: 'border-yellow-400', bg: 'bg-yellow-400/20' },
-    Autumn: { color: 'text-orange-300', icon: '🍂', ring: 'focus:ring-orange-400', border: 'border-orange-400', bg: 'bg-orange-400/20' },
-    Winter: { color: 'text-blue-300', icon: '❄️', ring: 'focus:ring-blue-400', border: 'border-blue-400', bg: 'bg-blue-400/20' },
+const seasonInfo: Record<Season, { icon: string }> = {
+    Spring: { icon: '🌸' },
+    Summer: { icon: '☀️' },
+    Autumn: { icon: '🍂' },
+    Winter: { icon: '❄️' },
 };
 
 const getCurrentSeason = (): Season => {
@@ -48,6 +50,18 @@ const App: React.FC = () => {
   const [nearbyPlaces, setNearbyPlaces] = useState<NearbyPlacesState>({});
   const [isListening, setIsListening] = useState<boolean>(false);
   const recognitionRef = useRef<any | null>(null);
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState<boolean>(false);
+
+  // Initialize history lazily to prevent overwriting with empty array on re-renders if logic was different
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    try {
+        const storedHistory = localStorage.getItem('bartender-search-history');
+        return storedHistory ? JSON.parse(storedHistory) : [];
+    } catch (e) {
+        console.error("Failed to parse search history", e);
+        return [];
+    }
+  });
 
   const requestLocation = useCallback(() => {
     if (!navigator.geolocation) {
@@ -68,11 +82,30 @@ const App: React.FC = () => {
     );
   }, []);
 
+  // Persist search history
+  useEffect(() => {
+    try {
+        localStorage.setItem('bartender-search-history', JSON.stringify(searchHistory));
+    } catch (e) {
+        console.error("Failed to save search history", e);
+    }
+  }, [searchHistory]);
+
   const handleSearch = useCallback(async (query: string) => {
     if (!query.trim()) {
       setError('Please enter a dish or menu.');
       return;
     }
+    
+    // Update Search History
+    setSearchHistory(prev => {
+        const cleanQuery = query.trim();
+        // Remove duplicates (case-insensitive) but keep new casing
+        const filtered = prev.filter(item => item.toLowerCase() !== cleanQuery.toLowerCase());
+        // Keep top 5 most recent
+        return [cleanQuery, ...filtered].slice(0, 5);
+    });
+
     setIsLoading(true);
     setError(null);
     setRecommendations(null);
@@ -195,17 +228,17 @@ const App: React.FC = () => {
       return (
         <div className="text-center py-12">
           <LoadingSpinner />
-          <p className="text-rich-gold mt-4 text-lg font-semibold font-serif">Mixing up the perfect pairings for {season}...</p>
+          <p className="text-accent-gold mt-4 text-lg font-semibold font-serif">Mixing up the perfect pairings for {season}...</p>
         </div>
       );
     }
 
-    if (error) return <div className="text-center py-12 text-deep-crimson font-semibold">{error}</div>;
+    if (error) return <div className="text-center py-12 text-red-400 font-semibold">{error}</div>;
     
     const dataSource = activeTab === 'recommendations' ? recommendations : favorites;
 
     if (!dataSource || dataSource.length === 0) {
-      if (activeTab === 'favorites') return <div className="text-center py-12 text-off-white/70">Your favorite shelf is empty. Discover and save some pairings!</div>;
+      if (activeTab === 'favorites') return <div className="text-center py-12 text-text-white/70">Your favorite shelf is empty. Discover and save some pairings!</div>;
       return <SeasonalSuggestions season={season} onSuggestionClick={handleSuggestionClick} />;
     }
 
@@ -228,11 +261,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-dark-wood/50">
+    <div className="min-h-screen bg-classic-brown flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="max-w-4xl mx-auto mb-10 bg-polished-oak/80 backdrop-blur-sm p-6 rounded-2xl shadow-2xl border border-rich-gold/30 ring-1 ring-rich-gold/20">
-          <h2 className="text-3xl sm:text-4xl text-center mb-4 text-off-white font-serif">Uncork Your Perfect Pairing</h2>
+      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+        <div className="max-w-4xl mx-auto mb-10 bg-card-brown p-6 rounded-lg shadow-lg border border-accent-gold/50">
+          <h2 className="text-3xl sm:text-4xl text-center mb-4 text-text-white font-serif">Uncork Your Perfect Pairing</h2>
           <form onSubmit={handleFormSubmit}>
               <div className="flex flex-col md:flex-row gap-3">
                   <div className="relative flex-grow">
@@ -241,12 +274,12 @@ const App: React.FC = () => {
                           value={foodQuery}
                           onChange={(e) => setFoodQuery(e.target.value)}
                           placeholder="What's on your menu tonight?"
-                          className="w-full pl-4 pr-12 py-3 bg-dark-wood border border-rich-gold/30 rounded-full focus:ring-2 focus:ring-rich-gold focus:border-rich-gold transition-colors placeholder-off-white/50 text-off-white text-base font-sans"
+                          className="w-full pl-4 pr-12 py-3 bg-classic-brown border border-accent-gold/70 rounded-full focus:ring-2 focus:ring-accent-gold focus:border-accent-gold transition-colors placeholder-text-white/50 text-text-white text-base font-sans"
                       />
                       <button
                           type="button"
                           onClick={handleVoiceSearch}
-                          className={`absolute inset-y-0 right-0 flex items-center pr-4 text-off-white/60 hover:text-rich-gold transition-colors ${isListening ? 'text-deep-crimson animate-pulse' : ''}`}
+                          className={`absolute inset-y-0 right-0 flex items-center pr-4 text-text-white/60 hover:text-accent-gold transition-colors ${isListening ? 'text-red-400 animate-pulse' : ''}`}
                           aria-label="Use microphone"
                       >
                           <MicrophoneIcon className="h-6 w-6" />
@@ -258,32 +291,65 @@ const App: React.FC = () => {
                           value={budget}
                           onChange={(e) => setBudget(e.target.value)}
                           placeholder="Budget?"
-                          className="w-full md:w-36 px-4 py-3 bg-dark-wood border border-rich-gold/30 rounded-full focus:ring-2 focus:ring-rich-gold focus:border-rich-gold transition-colors placeholder-off-white/50 text-off-white text-base font-sans"
+                          className="w-full md:w-36 px-4 py-3 bg-classic-brown border border-accent-gold/70 rounded-full focus:ring-2 focus:ring-accent-gold focus:border-accent-gold transition-colors placeholder-text-white/50 text-text-white text-base font-sans"
                       />
                       <button
                           type="submit"
                           disabled={isLoading}
-                          className="w-full md:w-auto px-8 py-3 bg-rich-gold text-dark-wood font-bold rounded-full hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-polished-oak focus:ring-rich-gold transition-all duration-300 transform hover:scale-105 disabled:bg-polished-oak disabled:text-off-white/50 disabled:cursor-not-allowed flex-shrink-0 font-serif"
+                          className="w-full md:w-auto px-8 py-3 bg-accent-gold text-classic-brown font-bold rounded-full hover:bg-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card-brown focus:ring-accent-gold transition-all duration-300 transform hover:scale-105 disabled:bg-card-brown disabled:text-text-white/50 disabled:cursor-not-allowed flex-shrink-0 font-serif"
                       >
                           {isLoading ? '...' : 'Discover'}
                       </button>
                   </div>
               </div>
           </form>
+
+          {searchHistory.length > 0 && (
+            <div className="mt-5 border-t border-accent-gold/20 pt-4">
+                <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-semibold text-text-white/40 uppercase tracking-wider flex items-center gap-1">
+                        <ClockIcon className="w-3 h-3" /> Recent Searches
+                    </span>
+                    <button 
+                        type="button" 
+                        onClick={() => setSearchHistory([])} 
+                        className="text-xs text-text-white/40 hover:text-red-400 transition-colors"
+                    >
+                        Clear History
+                    </button>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                    {searchHistory.map((historyItem, idx) => (
+                        <button
+                            key={`${historyItem}-${idx}`}
+                            onClick={() => {
+                                setFoodQuery(historyItem);
+                                handleSearch(historyItem);
+                            }}
+                            type="button"
+                            className="px-3 py-1.5 rounded-md bg-classic-brown/50 border border-text-white/10 text-text-white/70 text-sm hover:border-accent-gold/50 hover:text-accent-gold hover:bg-classic-brown transition-all font-sans"
+                        >
+                            {historyItem}
+                        </button>
+                    ))}
+                </div>
+            </div>
+          )}
+
            {locationPermission === 'denied' && (
-            <div className="mt-4 text-center text-sm text-yellow-200 bg-yellow-900/50 p-3 rounded-lg border border-rich-gold/50">
+            <div className="mt-4 text-center text-sm text-yellow-200 bg-yellow-900 p-3 rounded-lg border border-accent-gold/80">
               <LocationIcon className="h-5 w-5 inline mr-1" />
-              Location is disabled. <button onClick={requestLocation} className="font-semibold text-rich-gold hover:underline">Enable</button> to find drinks nearby.
+              Location is disabled. <button onClick={requestLocation} className="font-semibold text-accent-gold hover:underline">Enable</button> to find drinks nearby.
             </div>
           )}
           <div className="mt-6">
-              <p className="text-center text-sm text-off-white/60 mb-3">Select a season for tailored recommendations:</p>
+              <p className="text-center text-sm text-text-white/60 mb-3">Select a season for tailored recommendations:</p>
               <div className="flex justify-center flex-wrap gap-2 sm:gap-4">
                   {SEASONS.map(s => (
                       <button
                           key={s}
                           onClick={() => setSeason(s)}
-                          className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-polished-oak ${season === s ? `${seasonInfo[s].color} ${seasonInfo[s].border} ${seasonInfo[s].bg}` : 'text-off-white/60 border-transparent hover:bg-white/10' } ${seasonInfo[s].ring}`}
+                          className={`px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-card-brown ${season === s ? `text-accent-gold border-accent-gold` : 'text-text-white/60 border-transparent hover:border-text-white/50' }`}
                       >
                          <span className="mr-2">{seasonInfo[s].icon}</span> {s}
                       </button>
@@ -293,20 +359,20 @@ const App: React.FC = () => {
         </div>
 
         {(recommendations && recommendations.length > 0) || (activeTab === 'favorites' && favorites.length > 0) ? (
-          <div className="flex justify-center border-b border-rich-gold/20 mb-8">
+          <div className="flex justify-center border-b border-accent-gold/40 mb-8">
               <button
                 onClick={() => setActiveTab('recommendations')}
-                className={`px-6 py-3 text-lg font-serif transition-colors ${activeTab === 'recommendations' ? 'text-rich-gold border-b-2 border-rich-gold' : 'text-off-white/60 hover:text-rich-gold'}`}
+                className={`px-6 py-3 text-lg font-serif transition-colors ${activeTab === 'recommendations' ? 'text-accent-gold border-b-2 border-accent-gold' : 'text-text-white/60 hover:text-accent-gold'}`}
               >
                 Recommendations
               </button>
               <button
                 onClick={() => setActiveTab('favorites')}
-                className={`px-6 py-3 text-lg font-serif transition-colors relative ${activeTab === 'favorites' ? 'text-rich-gold border-b-2 border-rich-gold' : 'text-off-white/60 hover:text-rich-gold'}`}
+                className={`px-6 py-3 text-lg font-serif transition-colors relative ${activeTab === 'favorites' ? 'text-accent-gold border-b-2 border-accent-gold' : 'text-text-white/60 hover:text-accent-gold'}`}
               >
                 My Cellar
                 {favorites.length > 0 && (
-                  <span className="absolute top-2 right-0 -mt-1 -mr-1 flex h-6 w-6 items-center justify-center rounded-full bg-rich-gold text-xs font-bold text-dark-wood">
+                  <span className="absolute top-2 right-0 -mt-1 -mr-1 flex h-6 w-6 items-center justify-center rounded-full bg-accent-gold text-xs font-bold text-classic-brown">
                     {favorites.length}
                   </span>
                 )}
@@ -317,9 +383,16 @@ const App: React.FC = () => {
         {renderContent()}
 
       </main>
-      <footer className="text-center py-6 border-t border-rich-gold/20 mt-12">
-        <p className="text-off-white/50 text-sm">&copy; {new Date().getFullYear()} My Pocket Bartender. Fun pairings, found locally.</p>
+      <footer className="text-center py-6 border-t border-accent-gold/30 mt-auto">
+        <p className="text-text-white/50 text-sm mb-2">&copy; {new Date().getFullYear()} My Pocket Bartender. Fun pairings, found locally.</p>
+        <button 
+          onClick={() => setIsAboutModalOpen(true)}
+          className="text-accent-gold text-sm font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-accent-gold rounded"
+        >
+          About This App
+        </button>
       </footer>
+      <AboutModal isOpen={isAboutModalOpen} onClose={() => setIsAboutModalOpen(false)} />
     </div>
   );
 };

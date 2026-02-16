@@ -12,39 +12,14 @@
     <style>
       body {
         font-family: 'Lora', serif;
-        --dark-wood: #1a120b;
-        --polished-oak: #3a2d22;
-        --rich-gold: #e6a756;
-        --deep-crimson: #a13d3d;
-        --off-white: #f3eee4;
-        --soft-black: #120e0a;
+        /* New Solid Color Palette */
+        --classic-brown: #3D2B1F; /* A rich, dark coffee brown for the background */
+        --card-brown: #5C4033;    /* A slightly lighter, warm brown for cards and surfaces */
+        --accent-gold: #D4AF37;   /* A classic, metallic gold for accents and highlights */
+        --accent-blue: #002D62;   /* A deep, stately navy blue for secondary actions and contrast */
+        --text-white: #F5F5DC;    /* A soft, parchment-like off-white for text */
       }
       
-      #root::before {
-        content: '';
-        position: fixed;
-        top: 0; left: 0; right: 0; bottom: 0;
-        z-index: -1;
-        /* AI-Generated Photorealistic Bar Background */
-        background-color: var(--soft-black);
-        background-image:
-          /* Gold Bottle Glows */
-          radial-gradient(ellipse at 70% 25%, var(--rich-gold), transparent 40%),
-          radial-gradient(ellipse at 30% 28%, var(--rich-gold), transparent 40%),
-          radial-gradient(ellipse at 50% 65%, rgba(230, 167, 86, 0.4), transparent 50%),
-          /* Polished Bar Top Highlight */
-          linear-gradient(to top, rgba(243, 238, 228, 0.1), transparent 30%),
-          /* Wooden Shelves and Bar Texture */
-          repeating-linear-gradient(0deg, var(--polished-oak), var(--polished-oak) 2px, var(--dark-wood) 2px, var(--dark-wood) 250px),
-          repeating-linear-gradient(90deg, #2a2017, #2a2017 4px, var(--dark-wood) 4px, var(--dark-wood) 100px);
-        background-size: 15% 30%, 15% 30%, 40% 40%, 100% 100%, 100% 100%, 100% 100%;
-        background-position: 70% 25%, 30% 28%, 50% 65%, center bottom, 0 0, 0 0;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat;
-        filter: blur(3px) brightness(0.6) saturate(1.2);
-        transform: scale(1.1);
-        opacity: 0.9;
-      }
-
       h1, h2, h3, h4, .font-serif {
         font-family: 'Playfair Display', serif;
       }
@@ -52,17 +27,17 @@
         font-family: 'Lora', serif;
       }
 
-      /* Custom scrollbar for the professional theme */
+      /* Custom scrollbar for the new solid theme */
       ::-webkit-scrollbar {
         width: 12px;
       }
       ::-webkit-scrollbar-track {
-        background: var(--soft-black);
+        background: var(--classic-brown);
       }
       ::-webkit-scrollbar-thumb {
-        background-color: var(--rich-gold);
+        background-color: var(--accent-gold);
         border-radius: 20px;
-        border: 3px solid var(--soft-black);
+        border: 3px solid var(--classic-brown);
       }
     </style>
     <script>
@@ -70,12 +45,11 @@
         theme: {
           extend: {
             colors: {
-              'dark-wood': 'var(--dark-wood)',
-              'polished-oak': 'var(--polished-oak)',
-              'rich-gold': 'var(--rich-gold)',
-              'off-white': 'var(--off-white)',
-              'deep-crimson': 'var(--deep-crimson)',
-              'soft-black': 'var(--soft-black)',
+              'classic-brown': 'var(--classic-brown)',
+              'card-brown': 'var(--card-brown)',
+              'accent-gold': 'var(--accent-gold)',
+              'accent-blue': 'var(--accent-blue)',
+              'text-white': 'var(--text-white)',
             }
           }
         }
@@ -92,7 +66,7 @@
 }
 </script>
 </head>
-  <body class="bg-dark-wood text-off-white">
+  <body class="bg-classic-brown text-text-white">
     <div id="root"></div>
     <script type="module" src="/index.tsx"></script>
   </body>
